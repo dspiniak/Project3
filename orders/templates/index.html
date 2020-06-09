@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <script src="{% static 'menu.js' %}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+{% endblock %}
+
+{% block title %}Index{% endblock %}
+
+{% block content %}
+
+    <h1>Menu</h1>
+
+    {% if message %}
+        <div>
+            {{ message }}
+        </div>
+    {% endif %}
+
+    <p>Enter your order:</p>
+    <br>
+
+    <form id="order" class="form-inline">
+      {% csrf_token %}
+      <div>
+        <span>Food Type </span>
+        <select id="food_type" class="form-control" autocomplete="off" type="select" required>
+          <option disabled selected value> -- select your food -- </option>
+          {% for category in food_type %}
+            <option value="{{ categories }}">{{ category }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+    <button type="submit" class="btn btn-primary mb-1">send message</button>
+    </form>
+
+    <!--
+    # select foodtype
+    foodType = Orders.objects.get(=flight_id)
+    # select size w/ skip logic
+    # select topping w/ skip logic
+    # add quantity
+    # add item
+    # render topping if it exists within foodType
+    # add items
+    -->
+
+    <!-- Render menu representation in this view, menu must have skip logic for different categories (identify how to make skip logic work here ... use JS) -->
+
+
+
+
+
+{% endblock %}
