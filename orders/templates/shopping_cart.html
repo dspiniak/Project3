@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+
+  <h1>Shopping Cart</h1>
+
+  <div class="message">
+  {% if message %}
+    {{ message }}
+  {% endif %}
+  </div>
+
+  {% if shopping_cart %}
+    <p>Here are your order details:</p>
+    <!-- loop through order details -->
+
+    {% for order in orders %}
+      <p><b>Order:</b> {{ forloop.counter }}</p>
+        <p><b>Dish:</b> {{order.food_type.category}} - {{order.food_type.base}}</p>
+        <p><b>Size:</b> {{order.size.size}}</p>
+        {% if order.toppings.all %}
+          <p><b>Toppings:</b> {{ order.toppings.all|join:", " }}</p>
+        {% endif %}
+        </p>
+        <p><b>Item Price:</b> ${{order.order_price}}</p>
+      <p> ---- </p>
+
+    {% endfor %}
+
+    <p><b>Total price is:</b> ${{total_price}}</p>
+
+    <form action="shopping_cart" method="post">
+      {% csrf_token %}
+      <button type="submit" name="order_confirmed" value="confirmed" class="btn-link">Confirm Order</button>
+    </form>
+
+  {% endif %}
+
+{% endblock %}

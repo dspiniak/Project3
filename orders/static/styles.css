@@ -19,6 +19,13 @@ footer {
   line-height: 3;
 }
 
+.order {
+  background-color: #ffffba;
+  margin-left: 5px;
+  padding: 5px 5px 5px 5px;
+}
+
+.btn {}
 
 button.btn.btn-outline-danger {
   position: absolute;
@@ -26,10 +33,10 @@ button.btn.btn-outline-danger {
   right: 20px;
 }
 
-
 .form-control {
   margin-bottom: 5px;
   margin-top: 5px;
+  width: 25%;
 }
 
 .active-purple-2 input.form-control[type=text]:focus:not([readonly]) {

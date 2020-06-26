@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+
+{% block title %}Your Orders{% endblock %}
+
+{% block content %}
+
+  <h1>Your Orders</h1>
+
+  <div class="message">
+  {% if message %}
+    {{ message }}
+  {% endif %}
+  </div>
+
+  {% if shopping_carts %}
+
+    <p>Here are your orders and their details:</p>
+    <!-- loop through order details -->
+
+  <!-- loop over shopping carts -->
+    <div class="shopping_cart">
+    {% for shopping_cart in shopping_carts %}
+      <p><b>Order:</b> {{ forloop.counter }} </p>
+      <p><b>Status:</b> {{ shopping_cart.status }} </p>
+      <p><b><i>Total price is:</b> ${{shopping_cart.total_price}}</i></p>
+    </div>
+
+      <!-- loop over orders in shopping cart -->
+
+      {% for order in shopping_cart.orders.all %}
+      <div class="order">
+      <p><b>Item:</b> {{ forloop.counter }}</p>
+        <p><b>Dish:</b> {{order.food_type.category}} - {{order.food_type.base}}</p>
+        <p><b>Size:</b> {{order.size.size}}</p>
+        {% if order.toppings.all %}
+          <p><b>Toppings:</b> {{ order.toppings.all|join:", " }}</p>
+        {% endif %}
+        </p>
+        <p><b><i>Item Price:</b> ${{order.order_price}}</i></p>
+      </div>
+      <p> ---- </p>
+      {% endfor %}
+
+    {% endfor %}
+
+  {% else %}
+    <p>You have no orders placed yet.</p>
+  {% endif %}
+
+{% endblock %}

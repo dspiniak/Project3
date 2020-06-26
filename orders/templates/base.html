@@ -1,51 +1,66 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, width=device-width">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
 
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/static/styles.css" rel="stylesheet">
+    <link href="/static/styles.css" rel="stylesheet">
 
-        <!-- BOOTSTRAP -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- BOOTSTRAP -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
 
-        <title>CS50W Projec3: {% block title %}{% endblock %}</title>
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>> -->
 
-        {% block head %}{% endblock %}
-    </head>
+
+    <title>CS50W Project 3: {% block title %}{% endblock %}</title>
+
+    {% block head %}{% endblock %}
+  </head>
     <body>
-        <!-- navbar with register and login or see stuff-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <ul class="navbar-nav">
-              <li class="nav-item active">
-                <a class="nav-link" id="index_link" href="/">Channels list</a>
-              </li>
-                <!-- render if not logged in -->
-                {% if not user.is_authenticated %}
-                <li class="nav-item">
-                  <a class="nav-link" href="/login">Login</a>
-                </li>
-                {% endif %}
-                <!-- render if logged in -->
-              {% if user.is_authenticated %}
-                <li class="nav-item">
-                  <a class="nav-link" href="/logout">Log Out<span id="username"></span></a>
-                </li>
-              {% endif %}
-            </ul>
-        </nav>
-        <br>
+      <!-- navbar with register and login or see stuff-->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" id="index_link" href="/">Menu & Order</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" id="shopping_link" href="/shopping_cart">Shopping Cart</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" id="your_orders_link" href="/your_orders">Your Orders</a>
+          </li>
+          {% if request.user.is_superuser %}
+          <li class="nav-item active">
+            <a class="nav-link" id="users_orders" href="/users_orders">Users  Orders</a>
+          </li>
+          {% endif %}
+            <!-- render if not logged in -->
+            {% if not user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            {% endif %}
+            <!-- render if logged in -->
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Log Out<span id="username"></span></a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      <br>
 
-        {% block content %}{% endblock %}
-        <footer class="footer">
-            <div class="container">
-                <span class="text-muted">Created by Diego Spiniak</span>
-            </div>
-        </footer>
+      {% block content %}{% endblock %}
+      <footer class="footer">
+        <div class="container">
+          <span class="text-muted">Created by Diego Spiniak</span>
+        </div>
+      </footer>
 
     </body>
 

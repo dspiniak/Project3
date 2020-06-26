@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <script src="{% static 'change_cart_status.js' %}"></script>
+{% endblock %}
+
+{% block title %}Users Orders{% endblock %}
+
+{% block content %}
+
+  <h1>Users Orders</h1>
+
+  <div class="message">
+  {% if message %}
+    {{ message }}
+  {% endif %}
+  </div>
+
+  {% if request.user.is_superuser %}
+
+    {% if shopping_carts %}
+
+      <p>Here are users orders with their status and their details:</p>
+
+      <form id="cart_status" method="post">
+        {% csrf_token %}
+
+      <!-- loop through orders  -->
+      {% for shopping_cart in shopping_carts %}
+          <p><b>Username:</b> {{ request.user }}</p>
+          <p><b>Order ID:</b> {{ forloop.counter }} </p>
+          <p><b><i>Total price:</b> ${{shopping_cart.total_price}}</i></p>
+
+          <!-- create select option -->
+
+            <p><b>Status:</b>
+            <select id="{{shopping_cart.id}}" name="food_type" class="btn btn-secondary dropdown-toggle" type="select">
+
+            {% for status in status_choices %}
+                <option value="{{ status.1 }}" class="input-small"  {% if status.1 == shopping_cart.status %} selected {% endif  %}>{{ status.1}} </option>
+            {% endfor %}
+            </select>
+            </p>
+        ------------------------
+        <!-- order detals-->
+        {% for order in shopping_cart.orders.all %}
+        <div class="order">
+
+        <p><b>Item:</b> {{ forloop.counter }}</p>
+          <p><b>Dish:</b> {{order.food_type.category}} - {{order.food_type.base}}</p>
+          <p><b>Size:</b> {{order.size.size}}</p>
+          {% if order.toppings.all %}
+            <p><b>Toppings:</b> {{ order.toppings.all|join:", " }}</p>
+          {% endif %}
+          </p>
+          <p><b><i>Item Price:</b> ${{order.order_price}}</i></p>
+        </div>
+        <p> ---- </p>
+
+        {% endfor %}
+      <p>______________________________________</p>
+
+      {% endfor %}
+
+      </form>
+
+    {% else %}
+      <p>There are no orders placed yet</p>
+    {% endif %}
+  {% endif %}
+
+{% endblock %}

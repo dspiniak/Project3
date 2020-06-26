@@ -5,11 +5,11 @@
 {% block content %}
 <h1>Login</h1>
 
+<div class="message">
 {% if message %}
-    <div>
-        {{ message }}
-    </div>
+  {{ message }}
 {% endif %}
+</div>
 
 <form action="{% url 'login' %}" method="post">
     {% csrf_token %}
