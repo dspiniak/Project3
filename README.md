@@ -3,6 +3,7 @@
 Web Programming with Python and JavaScript
 
 *STATIC*
+
 **change_cart_status.js**
 Creates a request to server to change the shopping cart status.
 
