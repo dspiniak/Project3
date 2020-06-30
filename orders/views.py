@@ -24,7 +24,8 @@ def index(request):
             food_type_id = request.POST["food_type"]
             food_type_id = food_type_id.split(':')[0]
             food_category = FoodType.objects.get(id=food_type_id).category
-            print(f"From client got: {username}, {food_type_id}, {food_category}")
+            base = FoodType.objects.get(id=food_type_id).base
+            print(f"From client got: {username}, {food_type_id}, {food_category}, base: {base}")
 
             # get base price
             if any(x in food_category for x in ["Pizza", "Sub", "Dinner Platters"]):
@@ -32,16 +33,21 @@ def index(request):
             else:
                 size = "Regular"
 
+            print(f"size: {size}")
+
             size_id = Size.objects.get(size=size.split(',')[0]).id
             base_price = BasePrice.objects.get(food_id=food_type_id,size=size_id).price
 
             # get toppings price if necessary
             if "toppings" in request.POST:
                 toppings = request.POST.getlist("toppings")
-                if "Pizza" in food_category:
+                print(f"toppings: {toppings}")
+                if "Pizza" in food_category and not "Special" in base:
                     topping_price = ToppingPrice.objects.get(food=food_type_id,size_id=size_id,topping_num=len(toppings)).price
                 elif "Sub" in food_category:
                     topping_price = ToppingPrice.objects.get(food=food_type_id,topping_num=len(toppings)).price
+                else:
+                    topping_price = 0
             else:
                 topping_price = 0
 
@@ -142,6 +148,8 @@ def your_orders(request):
                 }
 
             return render(request, "your_orders.html", context)
+    else:
+        return HttpResponseRedirect(reverse("login"), {"message": "please login before making an order"})
 
 
 # send menu options to client
@@ -237,8 +245,8 @@ def change_cart_status(request):
         cart_id = request.POST["cart_id"]
         status_selected = request.POST["status_selected"]
 
-        # check if there are orders in shopping cart first
-        if ShoppingCart.objects.filter(id=cart_id).count()>=1:
+        # change status to unconfirmed only if no unconfirmed carts exists as no more than one unconfirmed cart can exist per user
+        if ShoppingCart.objects.filter(username=request.user, status="unconfirmed").count()>=1:
             data = {"message": "User already has orders in the shopping cart, delete the other cart first to change the status"}
 
         # change shopping cart status

@@ -28,7 +28,7 @@
 
       <!-- loop through orders  -->
       {% for shopping_cart in shopping_carts %}
-          <p><b>Username:</b> {{ request.user }}</p>
+          <p><b>Username:</b> {{ shopping_cart.username }}</p>
           <p><b>Order ID:</b> {{ forloop.counter }} </p>
           <p><b><i>Total price:</b> ${{shopping_cart.total_price}}</i></p>
 
