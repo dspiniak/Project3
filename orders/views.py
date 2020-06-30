@@ -21,21 +21,32 @@ def index(request):
 
             username = request.user
             food_type_id = request.POST["food_type"].split(':')[0]
-            size = request.POST["size"]
-            toppings = request.POST.getlist("toppings")
+            if request.POST["size"]:
+                size = request.POST["size"]
+            if request.POST.getlist("toppings"):
+                toppings = request.POST.getlist("toppings")
+
             food_category = FoodType.objects.get(id=food_type_id).category
             # order_price = request.POST["order_price"]
             print(f"{username}, {food_type_id}, {size}, {toppings}")
 
-            # get order price is correct
-            size_id = Size.objects.get(size=size.split(',')[0]).id
-            base_price = BasePrice.objects.get(food_id=food_type_id,size=size_id).price
+            # get order price via size and toppings when appropiate
 
-            if "Sub" in food_category:
-                topping_price = ToppingPrice.objects.get(food=food_type_id,topping_num=len(toppings)).price
 
+            # get base price
+            if "Pizza" or "Sub" or "Dinner Platters" in food_category:
+                size_id = Size.objects.get(size=size.split(',')[0]).id
+                base_price = BasePrice.objects.get(food_id=food_type_id,size=size_id).price
             else:
+                base_price = BasePrice.objects.get(food_id=food_type_id).price
+
+            # get toppings price
+            if "Pizza" in food_category:
                 topping_price = ToppingPrice.objects.get(food=food_type_id,size_id=size_id,topping_num=len(toppings)).price
+            elif "Sub" in food_category:
+                topping_price = ToppingPrice.objects.get(food=food_type_id,topping_num=len(toppings)).price
+            else:
+                topping_price = 0
 
             order_price=base_price+topping_price
             print(f"order price is: ${order_price}")

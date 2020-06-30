@@ -57,7 +57,7 @@ class ToppingPrice(models.Model):
 class Order(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     food_type = models.ForeignKey(FoodType, on_delete=models.CASCADE)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
+    size = models.ForeignKey(Size, blank=True, on_delete=models.CASCADE)
     toppings = models.ManyToManyField(Topping, blank=True)
     order_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
