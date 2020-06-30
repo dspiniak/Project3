@@ -79,7 +79,7 @@ class ShoppingCart(models.Model):
     status = models.CharField(
         max_length = 20,
         choices = status_choices,
-        default = '1'
+        default = 'unconfirmed'
         )
 
     def __str__(self):

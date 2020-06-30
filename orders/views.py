@@ -6,6 +6,7 @@ from django.contrib.auth import login, authenticate, logout
 from .models import FoodType, Size, Topping, BasePrice, ToppingPrice, Order, ShoppingCart
 from django.core import serializers
 from django.views.decorators.http import require_http_methods
+from django.contrib import messages
 
 # USER VIEWS
 def index(request):
@@ -18,33 +19,29 @@ def index(request):
             return render(request, "index.html", context)
 
         if request.method == "POST":
-
+            # get user, food_type, and food category
             username = request.user
-            food_type_id = request.POST["food_type"].split(':')[0]
-            if request.POST["size"]:
-                size = request.POST["size"]
-            if request.POST.getlist("toppings"):
-                toppings = request.POST.getlist("toppings")
-
+            food_type_id = request.POST["food_type"]
+            food_type_id = food_type_id.split(':')[0]
             food_category = FoodType.objects.get(id=food_type_id).category
-            # order_price = request.POST["order_price"]
-            print(f"{username}, {food_type_id}, {size}, {toppings}")
-
-            # get order price via size and toppings when appropiate
-
+            print(f"From client got: {username}, {food_type_id}, {food_category}")
 
             # get base price
-            if "Pizza" or "Sub" or "Dinner Platters" in food_category:
-                size_id = Size.objects.get(size=size.split(',')[0]).id
-                base_price = BasePrice.objects.get(food_id=food_type_id,size=size_id).price
+            if any(x in food_category for x in ["Pizza", "Sub", "Dinner Platters"]):
+                size = request.POST["size"]
             else:
-                base_price = BasePrice.objects.get(food_id=food_type_id).price
+                size = "Regular"
 
-            # get toppings price
-            if "Pizza" in food_category:
-                topping_price = ToppingPrice.objects.get(food=food_type_id,size_id=size_id,topping_num=len(toppings)).price
-            elif "Sub" in food_category:
-                topping_price = ToppingPrice.objects.get(food=food_type_id,topping_num=len(toppings)).price
+            size_id = Size.objects.get(size=size.split(',')[0]).id
+            base_price = BasePrice.objects.get(food_id=food_type_id,size=size_id).price
+
+            # get toppings price if necessary
+            if "toppings" in request.POST:
+                toppings = request.POST.getlist("toppings")
+                if "Pizza" in food_category:
+                    topping_price = ToppingPrice.objects.get(food=food_type_id,size_id=size_id,topping_num=len(toppings)).price
+                elif "Sub" in food_category:
+                    topping_price = ToppingPrice.objects.get(food=food_type_id,topping_num=len(toppings)).price
             else:
                 topping_price = 0
 
@@ -55,9 +52,10 @@ def index(request):
             order = Order(username=username, food_type_id=food_type_id, size_id=size_id, order_price=order_price)
             order.save()
 
-            toppings = Topping.objects.filter(topping__in=toppings)
-            # print(toppings)
-            order.toppings.set(toppings)
+            if any(x in food_category for x in ["Pizza", "Sub"]):
+                toppings = Topping.objects.filter(topping__in=toppings)
+                # print(toppings)
+                order.toppings.set(toppings)
 
             # create shopping cart or add order to shopping cart
             if not ShoppingCart.objects.filter(username=username, status="unconfirmed"):
@@ -74,6 +72,8 @@ def index(request):
                 old_total_price = shopping_cart.total_price
                 shopping_cart.total_price = old_total_price + order_price
                 shopping_cart.save()
+
+            messages.success(request, "Your order has been successfully added to the shopping cart")
 
             return HttpResponseRedirect(reverse("index"))
 
